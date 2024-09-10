@@ -10,12 +10,6 @@ public class HelloWorldTest {
 
     @Test
     public void testRestAssured(){
-        /*
-        Map<String, String> params = new HashMap<>();
-        params.put("message", "And this is a second message");
-        params.put("timestamp", "2021-06-04 16:41:51");
-         */
-
         JsonPath response = RestAssured
                 .given()
                 //.queryParams(params)
