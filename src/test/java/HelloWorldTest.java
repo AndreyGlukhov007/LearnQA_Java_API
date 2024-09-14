@@ -20,15 +20,17 @@ public class HelloWorldTest {
                     .get(locationHeader)
                     .andReturn();
 
-            locationHeader = response.getHeader("Location");
+
             statusCode = response.getStatusCode();
             if (statusCode != 200){
+                locationHeader = response.getHeader("Location");
                 numberIteration++;
             } else {
                 break;
             }
         }
-        System.out.println("All redirection " + numberIteration);
+        System.out.println("Redirection " + numberIteration);
+        System.out.println("Endpoint " + locationHeader);
     }
 
 }
