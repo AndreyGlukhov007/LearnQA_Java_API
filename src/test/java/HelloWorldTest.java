@@ -2,35 +2,64 @@ import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
+import java.lang.Thread;
+import static org.hamcrest.Matchers.*;
 
 public class HelloWorldTest {
 
     @Test
-    public void testRestAssured(){
+    public void testRestAssured() throws InterruptedException {
+            JsonPath responseOne = RestAssured
+                    .get("https://playground.learnqa.ru/ajax/api/longtime_job")
+                    .jsonPath();
 
-        int numberIteration = 1;
-        String locationHeader = "https://playground.learnqa.ru/api/long_redirect";
-        int statusCode;
+            //responseOne.prettyPrint(); - этот метод можно удалить. Он нужен был для отлаживания.
 
-        for (;;) {
-            Response response = RestAssured
+            String token = responseOne.get("token");
+            int time = responseOne.get("seconds");
+
+            JsonPath responseTwo = RestAssured
                     .given()
-                    .redirects().follow(false)
+                    .queryParam("token",token)
                     .when()
-                    .get(locationHeader)
-                    .andReturn();
+                    .get("https://playground.learnqa.ru/ajax/api/longtime_job")
+                    .jsonPath();
 
+            //responseTwo.prettyPrint(); - этот метод можно удалить. Он нужен был для отлаживания.
 
-            statusCode = response.getStatusCode();
-            if (statusCode != 200){
-                locationHeader = response.getHeader("Location");
-                numberIteration++;
+            String statusResponseOne = responseTwo.get("status");
+            if (statusResponseOne.equals("Job is NOT ready")){
+                System.out.println("Отлично. Метод API продолжает работать. Ждём когда завершится метод.");
             } else {
-                break;
+                System.out.println("Что-то пошло не так. Метод будет завершён");
+                return;
             }
-        }
-        System.out.println("Redirection " + numberIteration);
-        System.out.println("Endpoint " + locationHeader);
+
+            Thread.sleep(time*1000); //Мы получаем из метода ответ в секундах. А функция sleep() отрабатывает в миллисекундах.
+            //таким образом через умножение на 1000 мы переводим секунды в миллисекунды.
+
+            JsonPath responseThree = RestAssured
+                .given()
+                .queryParam("token",token)
+                .when()
+                .get("https://playground.learnqa.ru/ajax/api/longtime_job")
+                .jsonPath();
+
+            //responseThree.prettyPrint(); - этот метод можно удалить. Он нужен был для отлаживания.
+
+            String statusResponseTwo = responseThree.get("status");
+            String result = responseThree.get("result");
+            if (statusResponseTwo.equals("Job is ready") & result != null){
+                System.out.println("Отлично. Тестирование метода завершено.");
+            } else {
+                System.out.println("Что-то пошло не так. Метод будет завершён");
+                return;
+            }
+
+            //responseThree.prettyPrint(); - этот метод можно удалить. Он нужен был для отлаживания.
+
     }
 
 }
+
+
