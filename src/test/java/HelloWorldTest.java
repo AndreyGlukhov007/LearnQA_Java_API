@@ -15,15 +15,20 @@ public class HelloWorldTest {
 
     @Test
     public void testRestAssured() {
+        Response response = RestAssured
+                .given()
+                .get("https://playground.learnqa.ru/api/homework_cookie")
+                .andReturn();
 
-        String variableString = "testing1233243243243543543543534"; //строка, в которой будут сравниваться количество символов
 
-        //первый способ
-        assertTrue(variableString.length()>=15, "Количество символов меньше 15");
+        Map<String, String> responseCookies = response.getCookies();
+        System.out.println(responseCookies);
 
-        //второй способ
-        assertEquals(true, variableString.length()>=15, "Количество символов меньше 15");
 
+        String responseCookie = response.getCookie("HomeWork");
+        System.out.println(responseCookie);
+
+        assertEquals("hw_value", responseCookie, "Cookie не совпадают!");
 
     }
 
