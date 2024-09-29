@@ -113,12 +113,13 @@ public class HelloWorldTest {
                 .post("https://playground.learnqa.ru/ajax/api/check_auth_cookie")
                 .andReturn();
 
-            String responseText = responseForAuthorization.print();
+            String responseText = responseForAuthorization.getBody().asString();
             if(responseText.equals("You are authorized")){
                 System.out.println("Фраза из ответ " + responseText);
                 System.out.println("Пароль " + allPassword.get(i));
                 break;
             };
+
 
         }
 
