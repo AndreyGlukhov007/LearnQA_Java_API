@@ -64,4 +64,14 @@ public class ApiCoreRequists {
                 .andReturn();
     }
     //после того как методы написаны, перепишем вызовы в классе UserAuthTest
+
+    //запросы для задания Ex15: Тесты на метод user
+    @Step("Make a POST-requist create user on incorrect email")
+    public Response makePostRequistCreateUser(String url, Map<String, String> createData){
+        return given()
+                .filter(new AllureRestAssured())
+                .body(createData)
+                .post(url)
+                .andReturn();
+    }
 }

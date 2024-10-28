@@ -3,6 +3,7 @@ package tests;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import lib.ApiCoreRequists;
 import lib.Assertions;
 import lib.BaseTestCase;
 import lib.DataGenerator;
@@ -14,6 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UserRegisterTest extends BaseTestCase {
+
+    private final ApiCoreRequists apiCoreRequists = new ApiCoreRequists();
+
     @Test
     public void testCreateUserWithExistingEmail(){
         String email = "vinkotov@example.com";
@@ -60,11 +64,7 @@ public class UserRegisterTest extends BaseTestCase {
         userData.put("email", email);
         userData = DataGenerator.getRegistrationData(userData);
 
-        Response responseCreateAuth = RestAssured
-                .given()
-                .body(userData)
-                .post("https://playground.learnqa.ru/api/user/")
-                .andReturn();
+        Response responseCreateAuth = apiCoreRequists.makePostRequistCreateUser("https://playground.learnqa.ru/api/user/", userData);
 
         Assertions.assertResponseCodeEquals(responseCreateAuth, 400);
         Assertions.assertResponseTextEquals(responseCreateAuth, "Invalid email format");
@@ -83,11 +83,7 @@ public class UserRegisterTest extends BaseTestCase {
 
         userData.remove(strings);
 
-        Response responseCreateAuth = RestAssured
-                    .given()
-                    .body(userData)
-                    .post("https://playground.learnqa.ru/api/user/")
-                    .andReturn();
+        Response responseCreateAuth = apiCoreRequists.makePostRequistCreateUser("https://playground.learnqa.ru/api/user/", userData);
 
         Assertions.assertResponseCodeEquals(responseCreateAuth, 400);
         Assertions.assertResponseTextEquals(responseCreateAuth, "The following required params are missed: " + strings);
@@ -102,11 +98,7 @@ public class UserRegisterTest extends BaseTestCase {
         userData.put("email", email);
         userData = DataGenerator.getRegistrationData(userData);
 
-        Response responseCreateAuth = RestAssured
-                .given()
-                .body(userData)
-                .post("https://playground.learnqa.ru/api/user/")
-                .andReturn();
+        Response responseCreateAuth = apiCoreRequists.makePostRequistCreateUser("https://playground.learnqa.ru/api/user/", userData);
 
         Assertions.assertResponseCodeEquals(responseCreateAuth, 400);
         Assertions.assertResponseTextEquals(responseCreateAuth, "Users with email '" + email + "' already exists");
@@ -121,11 +113,7 @@ public class UserRegisterTest extends BaseTestCase {
         userData.put("email", email);
         userData = DataGenerator.getRegistrationData(userData);
 
-        Response responseCreateAuth = RestAssured
-                .given()
-                .body(userData)
-                .post("https://playground.learnqa.ru/api/user/")
-                .andReturn();
+        Response responseCreateAuth = apiCoreRequists.makePostRequistCreateUser("https://playground.learnqa.ru/api/user/", userData);
 
         Assertions.assertResponseCodeEquals(responseCreateAuth, 400);
         Assertions.assertResponseTextEquals(responseCreateAuth, "The value of 'email' field is too long");
