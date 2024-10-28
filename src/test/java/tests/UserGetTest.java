@@ -1,7 +1,9 @@
 package tests;
 
+import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import lib.ApiCoreRequists;
 import lib.Assertions;
 import lib.BaseTestCase;
 import org.junit.jupiter.api.Test;
@@ -10,6 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UserGetTest extends BaseTestCase {
+
+    private final ApiCoreRequists apiCoreRequists = new ApiCoreRequists();
+
     //первый тест когда пользователь ещё не авторизован. Если пользователь не авторизован, в ответ должен вернуться только логин пользователя.
     @Test
     public void testGetUserDataNotAuth(){
@@ -60,10 +65,35 @@ public class UserGetTest extends BaseTestCase {
         String[] expectedFields = {"username", "firstName", "lastName", "email"};
 
         Assertions.assertJsonHasFields(responseUserData, expectedFields);
+    }
         /*
         Мы хотим улучшить тест и сделать его чуть читаемым. В нашем классе напишем функция assertJsonHasKey().
         Она будет работать аналогичным образом assertJsonHasKey(), только на вход будет получать сразу все ключи
         в наличии которых должна будет убедиться.
          */
+
+    // Ex16: Запрос данных другого пользователя
+    @Test
+    @Step("Another user's request")
+    public void testEx16() {
+        Map<String, String> authData = new HashMap<>();
+        authData.put("email", "vinkotov@example.com");
+        authData.put("password", "1234");
+
+        Response responseGetAuth = apiCoreRequists.makePostRequistCreateUser("https://playground.learnqa.ru/api/user/login", authData);
+
+        String header = this.getHeader(responseGetAuth, "x-csrf-token");
+        String cookie = this.getCookie(responseGetAuth, "auth_sid");
+
+        Response responseUserData = apiCoreRequists.makeGetRequist("https://playground.learnqa.ru/api/user/3", header, cookie);
+
+        System.out.println(responseUserData.prettyPrint());
+
+        Assertions.assertJsonHasField(responseUserData, "username");
+        Assertions.assertJsonHasNotField(responseUserData, "firstName");
+        Assertions.assertJsonHasNotField(responseUserData, "lastName");
+        Assertions.assertJsonHasNotField(responseUserData, "email");
+
     }
 }
+
